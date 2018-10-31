@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.squareballstepview
  * Created by anweshmishra on 31/10/18.
  */
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.MotionEvent
@@ -209,6 +210,14 @@ class SquareBallStepsView(ctx : Context) : View(ctx) {
             sbs.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : SquareBallStepsView {
+            val view : SquareBallStepsView = SquareBallStepsView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
