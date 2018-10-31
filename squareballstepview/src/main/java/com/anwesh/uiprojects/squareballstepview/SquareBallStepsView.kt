@@ -18,17 +18,21 @@ val sides : Int = 4
 
 val balls : Int = 3
 
-fun Float.divideScale(j : Int, n : Int) = Math.min((1f/n), Math.max(0f, this - (1f/ n) * j)) * n
+val delay : Long = 12
+
+val scaleSpeed : Float = 0.05f
+
+fun Float.divideScale(j : Int, n : Int) : Float = Math.min((1f/n), Math.max(0f, this - (1f/ n) * j)) * n
 
 fun Canvas.drawSBSNode(i : Int, scale : Float, paint : Paint) {
     paint.color = Color.parseColor("#01579B")
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = h / (nodes + 1)
-    val deg : Float = 360f / balls
+    val deg : Float = 360f / sides
     val size : Float = gap / 3
-    val xGap : Float = (2 * size) / (balls + 1)
-    val r : Float = xGap / 3
+    val xGap : Float = (2 * size) / (balls)
+    val r : Float = xGap / 2
     paint.strokeWidth = Math.min(w, h) / 120
     paint.strokeCap = Paint.Cap.ROUND
     save()
@@ -53,6 +57,8 @@ fun Canvas.drawSBSNode(i : Int, scale : Float, paint : Paint) {
     restore()
 }
 
+fun Float.updateScale(dir : Float, n : Int) : Float = this + (scaleSpeed / n) * dir
+
 class SquareBallStepsView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -75,7 +81,7 @@ class SquareBallStepsView(ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            scale += 0.05f * dir
+            scale = scale.updateScale(dir, balls * sides)
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
@@ -98,7 +104,7 @@ class SquareBallStepsView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
