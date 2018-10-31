@@ -181,5 +181,32 @@ class SquareBallStepsView(ctx : Context) : View(ctx) {
                 cb(i, scl)
             }
         }
+
+        fun startUpdating(cb : () -> Unit) {
+            curr.startUpdating(cb)
+        }
+    }
+
+    data class Renderer(var view : SquareBallStepsView) {
+
+        private val sbs : SquareBallStep = SquareBallStep(0)
+
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#BDBDBD"))
+            sbs.draw(canvas, paint)
+            animator.animate {
+                sbs.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            sbs.startUpdating {
+                animator.start()
+            }
+        }
     }
 }
