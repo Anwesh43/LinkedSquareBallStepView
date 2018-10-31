@@ -107,8 +107,53 @@ class SquareBallStepsView(ctx : Context) : View(ctx) {
 
         fun stop() {
             if (animated) {
-                animated = false 
+                animated = false
             }
+        }
+    }
+
+    data class SBSNode(var i : Int, val state : State = State()) {
+
+        private var prev : SBSNode? = null
+
+        private var next : SBSNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = SBSNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawSBSNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : SBSNode {
+            var curr : SBSNode? = next
+            if (dir == -1) {
+                curr = prev
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
