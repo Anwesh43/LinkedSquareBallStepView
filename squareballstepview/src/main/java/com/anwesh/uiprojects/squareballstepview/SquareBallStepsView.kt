@@ -28,6 +28,8 @@ fun Canvas.drawSBSNode(i : Int, scale : Float, paint : Paint) {
     val size : Float = gap / 3
     val xGap : Float = (2 * size) / (balls + 1)
     val r : Float = xGap / 3
+    paint.strokeWidth = Math.min(w, h) / 120
+    paint.strokeCap = Paint.Cap.ROUND
     save()
     translate(w/2, gap + i * gap)
     for (j in 0..(sides - 1)) {
@@ -39,6 +41,9 @@ fun Canvas.drawSBSNode(i : Int, scale : Float, paint : Paint) {
             val scb : Float = sc.divideScale(k, balls)
             save()
             translate(xGap + xGap * k, 0f)
+            paint.style = Paint.Style.STROKE
+            drawCircle(0f, 0f, r, paint)
+            paint.style = Paint.Style.FILL
             drawCircle(0f, 0f, r * scb, paint)
             restore()
         }
